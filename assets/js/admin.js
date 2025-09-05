@@ -8,13 +8,16 @@ document.addEventListener("DOMContentLoaded", function() {
         button.addEventListener("click", function(e) {
             e.preventDefault();
 
-            // слагаме ID-то на задачата в hidden полето
             const taskId = button.getAttribute("data-task-id");
             taskIdField.value = taskId;
 
             dialog.showModal();
         });
     });
+
+    if(!cancelBtn){
+        return;
+    }
 
     cancelBtn.addEventListener("click", function() {
         dialog.close();
@@ -30,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function() {
         button.addEventListener("click", function(e) {
             e.preventDefault();
 
-            // Попълваме стойностите
             document.getElementById("edit-task-id").value = this.dataset.id;
             document.getElementById("edit-task-title").value = this.dataset.title;
             document.getElementById("edit-task-description").value = this.dataset.description;
@@ -38,6 +40,10 @@ document.addEventListener("DOMContentLoaded", function() {
             dialog.showModal();
         });
     });
+
+    if(!cancelBtn){
+        return;
+    }
 
     cancelBtn.addEventListener("click", function() {
         dialog.close();

@@ -26,7 +26,6 @@ class wpToDo
         add_action("admin_init", array($this, "deleteTask"));
         add_action("admin_init", array($this, "editTask"));
         add_action('init', array($this, 'register_custom_blocks'));
-        add_action('enqueue_block_editor_assets', array($this, 'enqueue_block_assets'));
     }
 
     public function init()
@@ -49,7 +48,7 @@ class wpToDo
 
     function register_custom_blocks()
     {
-        register_block_type(__DIR__ . '/build' . __DIR__ . '/build/blocks/wp-toDo-block');
+        register_block_type(__DIR__ . '/blocks/build/block.json');
     }
 
 

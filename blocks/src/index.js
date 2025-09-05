@@ -1,8 +1,11 @@
-/*
-Plugin Name: wp-toDo
-Plugin URI: https://wp-code.eu
-Description: To-Do List plugin for WordPress
-Version: 1.0
-Author: Mihail Prohorov
-Author URI: https://wp-code.eu
-*/
+import { registerBlockType } from '@wordpress/blocks';
+import { useBlockProps } from '@wordpress/block-editor';
+
+registerBlockType('wp-todo/block', {
+    edit() {
+        return <div {...useBlockProps()}>To-Do Block Editor</div>;
+    },
+    save() {
+        return <div {...useBlockProps()}>To-Do Block Frontend</div>;
+    },
+});
