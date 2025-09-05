@@ -3,15 +3,13 @@
 return array(
 	'build' => array(
 		'apiVersion' => 2,
-		'name' => 'wp-toDo-block',
-		'title' => 'wp-toDo-block',
+		'name' => 'wp-todo/block',
+		'title' => 'To-Do Block',
 		'category' => 'widgets',
 		'icon' => 'admin-generic',
-		'keywords' => array(
-			'wp-toDo-block'
-		),
 		'supports' => array(
 			'html' => false
-		)
+		),
+		'editorScript' => 'file:./index.js'
 	)
 );
