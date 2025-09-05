@@ -264,8 +264,6 @@ class wpToDo
     }
 
 
-
-
     public function view_settings_html() {}
 
     public function admin_page()
@@ -281,7 +279,7 @@ class wpToDo
                 "created_at" => current_time("mysql"),
                 "updated_at" => current_time("mysql"),
             ]);
-            echo '<div class="updated"><p>' . _e("Task added successfully!", "wp-toDo") . '</p></div>';
+            echo '<div class="updated"><p>' . __("Task added successfully!", "wp-toDo") . '</p></div>';
         }
 
     ?>
