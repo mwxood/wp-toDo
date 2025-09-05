@@ -1,0 +1,8 @@
+/*
+Plugin Name: wp-toDo
+Plugin URI: https://wp-code.eu
+Description: To-Do List plugin for WordPress
+Version: 1.0
+Author: Mihail Prohorov
+Author URI: https://wp-code.eu
+*/
