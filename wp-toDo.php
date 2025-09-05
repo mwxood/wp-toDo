@@ -68,7 +68,6 @@ class wpToDo
         global $wpdb;
         $table_name = $wpdb->prefix . "todo";
 
-        // Запис на нова задача
         if (isset($_POST["submit_todo"])) {
             $wpdb->insert($table_name, [
                 "title" => sanitize_text_field($_POST["title"]),
