@@ -19,6 +19,30 @@
     margin-bottom: 5rem !important;
 }
 
+.mr-1 {
+    margin-right: 1rem !important;
+}
+
+.mr-2 {
+    margin-right: 2rem !important;
+}
+
+.mr-3 {
+    margin-right: 3rem !important;
+}
+
+.mr-4 {
+    margin-right: 4rem !important;
+}
+
+.mr-5 {
+    margin-right: 5rem !important;
+}
+
+.p-0 {
+    padding: 0 !important;
+}
+
 .danger-button {
     background-color: #c0392b !important;
     color: #fff !important;
@@ -28,6 +52,33 @@
 .danger-button:hover {
     background-color: #e74c3c !important;
     border: 1px solid #e74c3c !important;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.d-block {
+    display: block;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.dialog {
+    max-width: 800px;
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0 auto;
 }
 
 
