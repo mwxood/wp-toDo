@@ -49,7 +49,7 @@ class wpToDo
 
     function register_custom_blocks()
     {
-        register_block_type(__DIR__ . '/blocks/wp-toDo-block');
+        register_block_type(__DIR__ . '/build' . __DIR__ . '/build/blocks/wp-toDo-block');
     }
 
 
