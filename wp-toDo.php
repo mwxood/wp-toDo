@@ -23,6 +23,8 @@ class wpToDo
         add_action("admin_menu", array($this, "admin_menu"));
         register_activation_hook(__FILE__, array($this, "create_table"));
         add_action("admin_enqueue_scripts", array($this, "admin_enqueue_style"));
+        add_action("admin_init", array($this, "deleteTask"));
+        add_action("admin_init", array($this, "editTask"));
     }
 
     public function init()
@@ -39,6 +41,8 @@ class wpToDo
             "1.0",
             "all"
         );
+
+        wp_enqueue_script("wp-toDo-admin", plugin_dir_url(__FILE__) . "assets/js/admin.js", array(), "1.0", true);
     }
 
     public function create_table()
@@ -129,23 +133,138 @@ class wpToDo
                                 <td><?php echo esc_html(date("Y-m-d", strtotime($task->created_at))); ?></td>
                                 <td><?php echo esc_html(date("Y-m-d", strtotime($task->updated_at))); ?></td>
                                 <td>
-                                    <a class="button button-primary" href="<?php echo esc_url(add_query_arg("action", "edit", "")); ?>"><? _e("Edit", "wp-toDo") ?></a>
-                                    <a class="button danger-button" href="<?php echo esc_url(add_query_arg("action", "delete", "")); ?>"><? _e("Delete", "wp-toDo") ?></a>
+                                    <div class="d-flex">
+                                        <a href="#"
+                                            class="button button-primary edit-task-button mr-1"
+                                            data-id="<?php echo esc_attr($task->id); ?>"
+                                            data-title="<?php echo esc_attr($task->title); ?>"
+                                            data-description="<?php echo esc_attr($task->description); ?>">
+                                            <?php _e("Edit", "wp-toDo"); ?>
+                                        </a>
+
+                                        <a href="#" class="button danger-button delete-task-button"
+                                            data-task-id="<?php echo esc_attr($task->id); ?>">
+                                            <?php _e("Delete", "wp-toDo"); ?>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
+
+                            <dialog id="delete-confirm-dialog">
+                                <p><?php _e("Are you sure you want to delete this task?", "wp-toDo"); ?></p>
+                                <menu>
+                                    <form method="post" id="delete-task-form">
+                                        <?php wp_nonce_field("delete_task_" . $task->id, "delete_task_nonce"); ?>
+                                        <input type="hidden" name="task_id" id="task-id-field">
+                                        <input type="hidden" name="delete_task" value="1">
+                                        <button type="submit" id="confirm-delete"><?php _e("Delete", "wp-toDo"); ?></button>
+                                    </form>
+
+                                    <button id="cancel-delete" type="button"><?php _e("Cancel", "wp-toDo"); ?></button>
+                                </menu>
+                            </dialog>
+
+                            <dialog id="edit-task-dialog" class="dialog">
+                                <form method="post">
+                                    <?php wp_nonce_field("edit_task_action", "edit_task_nonce"); ?>
+                                    <input type="hidden" name="task_id" id="edit-task-id">
+
+                                    <label for="edit-task-title" class="d-block mb-1">
+                                        <?php _e("Title", "wp-toDo"); ?>
+                                    </label>
+                                    <input type="text" id="edit-task-title" class="d-block w-full mt-1 mb-1" name="title" required>
+
+                                    <label for="edit-task-status" class="d-block mb-1"><?php _e("Status", "wp-toDo"); ?></label>
+                                    <select id="edit-task-status" name="status" class="d-block w-full mt-1 mb-1">
+                                        <option value="pending"><?php _e("Pending", "wp-toDo"); ?></option>
+                                        <option value="in_progress"><?php _e("In Progress", "wp-toDo"); ?></option>
+                                        <option value="done"><?php _e("Done", "wp-toDo"); ?></option>
+                                    </select>
+
+                                    <label for="edit-task-description" class="d-block mb-1"><?php _e("Description", "wp-toDo"); ?></label>
+                                    <textarea id="edit-task-description" name="description" class="d-block w-full mt-1 mb-1"></textarea>
+
+                                    <menu class="d-flex justify-content-between p-0">
+                                        <button type="submit" name="update_task" class="button button-primary">
+                                            <?php _e("Update Task", "wp-toDo"); ?>
+                                        </button>
+                                        <button type="button" id="cancel-edit" class="button">
+                                            <?php _e("Cancel", "wp-toDo"); ?>
+                                        </button>
+                                    </menu>
+                                </form>
+                            </dialog>
+
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
 
         <?php else : ?>
-            <div class="wrap">
+            <div class=" wrap">
                 <h1 class="mb-1"><?php _e("No tasks found.", "wp-toDo"); ?></h1>
             </div>
         <?php endif; ?>
     <?php
 
     }
+
+    public function deleteTask()
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . "todo";
+
+        if (!empty($_POST["task_id"]) && !empty($_POST["delete_task_nonce"])) {
+            $task_id = intval($_POST["task_id"]);
+
+            if (!wp_verify_nonce($_POST["delete_task_nonce"], "delete_task_" . $task_id)) {
+                return;
+            }
+
+            if (!current_user_can("manage_options")) {
+                return;
+            }
+
+            $wpdb->delete($table_name, ["id" => $task_id], ["%d"]);
+
+            echo '<div class="updated"><p>' . __("Task deleted successfully!", "wp-toDo") . '</p></div>';
+        }
+    }
+
+    public function editTask()
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . "todo";
+
+        if (isset($_POST["update_task"]) && isset($_POST["edit_task_nonce"])) {
+            $task_id = intval($_POST["task_id"]);
+
+            if (!wp_verify_nonce($_POST["edit_task_nonce"], "edit_task_action")) {
+                return;
+            }
+
+            if (!current_user_can("manage_options")) {
+                return;
+            }
+
+            $title = sanitize_text_field($_POST["title"]);
+            $description = sanitize_textarea_field($_POST["description"]);
+            $status = sanitize_text_field($_POST["status"]);
+
+            $wpdb->update(
+                $table_name,
+                ["title" => $title, "description" => $description, "status" => $status],
+                ["id" => $task_id],
+                ["%s", "%s", "%s"],
+                ["%d"]
+            );
+
+            echo '<div class="updated"><p>' . __("Task updated successfully!", "wp-toDo") . '</p></div>';
+        }
+    }
+
+
+
 
     public function view_settings_html() {}
 
@@ -183,6 +302,7 @@ class wpToDo
                         <td>
                             <select name="status">
                                 <option value="pending"><? _e("Pending", "wp-toDo") ?></option>
+                                <option value="in_progress"><? _e("In Progress", "wp-toDo") ?></option>
                                 <option value="done"><? _e("Done", "wp-toDo") ?></option>
                             </select>
                         </td>
