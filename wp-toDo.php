@@ -25,7 +25,7 @@ class wpToDo
         add_action("admin_enqueue_scripts", array($this, "admin_enqueue_style"));
         add_action("admin_init", array($this, "deleteTask"));
         add_action("admin_init", array($this, "editTask"));
-        add_action('init', array($this, 'register_custom_blocks'));
+        add_shortcode('wp_todo', array($this, 'wp_todo_shortcode'));
     }
 
     public function init()
@@ -49,6 +49,43 @@ class wpToDo
     function register_custom_blocks()
     {
         register_block_type(__DIR__ . '/blocks/build/block.json');
+    }
+
+    function wp_todo_render_block($attributes, $content)
+    {
+        $todos = get_option('wp_todo_items', []);
+
+        if (empty($todos)) {
+            return '<p>Няма задачи.</p>';
+        }
+
+        $output = '<ul class="wp-todo-block">';
+        foreach ($todos as $todo) {
+            $output .= '<li>' . esc_html($todo) . '</li>';
+        }
+        $output .= '</ul>';
+
+        return $output;
+    }
+
+    function wp_todo_shortcode($atts)
+    {
+        global $wpdb;
+        $table = $wpdb->prefix . 'todo';
+        $tasks = $wpdb->get_results("SELECT * FROM $table ORDER BY created_at DESC");
+
+        if (empty($tasks)) {
+            return '<p>No tasks yet.</p>';
+        }
+
+        $output = '<ul class="wp-todo-list">';
+        foreach ($tasks as $task) {
+            $checked = !empty($task->completed) ? '✔ ' : '';
+            $output .= '<li>' . $checked . esc_html($task->title) . '</li>';
+        }
+        $output .= '</ul>';
+
+        return $output;
     }
 
 
