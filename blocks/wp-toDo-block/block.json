@@ -1,0 +1,11 @@
+{
+    "apiVersion": 2,
+    "name": "wp-toDo-block",
+    "title": "wp-toDo-block",
+    "category": "widgets",
+    "icon": "admin-generic",
+    "keywords": ["wp-toDo-block"],
+    "supports": {
+        "html": false
+    }
+}

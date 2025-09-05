@@ -25,6 +25,8 @@ class wpToDo
         add_action("admin_enqueue_scripts", array($this, "admin_enqueue_style"));
         add_action("admin_init", array($this, "deleteTask"));
         add_action("admin_init", array($this, "editTask"));
+        add_action('init', array($this, 'register_custom_blocks'));
+        add_action('enqueue_block_editor_assets', array($this, 'enqueue_block_assets'));
     }
 
     public function init()
@@ -44,6 +46,12 @@ class wpToDo
 
         wp_enqueue_script("wp-toDo-admin", plugin_dir_url(__FILE__) . "assets/js/admin.js", array(), "1.0", true);
     }
+
+    function register_custom_blocks()
+    {
+        register_block_type(__DIR__ . '/blocks/wp-toDo-block');
+    }
+
 
     public function create_table()
     {
