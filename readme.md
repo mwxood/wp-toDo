@@ -10,7 +10,7 @@ This plugin allows you to create and manage a To-Do list for your WordPress site
 2. Activate the plugin through the 'Plugins' screen in WordPress.
 3. Use the plugin by adding the shortcode `[wp_todo]` to any post or page.
 
--No need to install or remove database table manually.
+- No need to install or remove database table manually.
 
 ### Usage
 
