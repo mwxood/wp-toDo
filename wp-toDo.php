@@ -115,8 +115,8 @@ class wpToDo
 
             $output .= '<li class="wp-todo-item">';
             $output .= '<div class="d-flex justify-content-end status-holder"><span class="status ' . esc_html($task->status) . '">' . esc_html($task->status) . '</span></div>';
-            $output .= '<span class="title">' . esc_html($task->title) . '</span>';
-            $output .= '<span class="description">' . esc_html($task->description) . '</span>';
+            $output .= '<span class="title">Title: <strong>' . esc_html($task->title) . '</strong></span>';
+            $output .= '<span class="description">Description: ' . esc_html($task->description) . '</span>';
 
             $output .= '<div class="action-buttons">
              <form method="post" class="edit-task-form">
