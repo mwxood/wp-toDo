@@ -4,6 +4,9 @@ if (!defined("ABSPATH")) {
     exit();
 }
 
+/**
+ * Uninstall the plugin
+ */
 
 function wpToDo_uninstall()
 {
