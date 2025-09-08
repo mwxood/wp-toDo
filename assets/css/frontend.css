@@ -1,3 +1,78 @@
+:root {
+    --primary-color: #34495e;
+    --secondary-color: #3498db;
+    --success-color: #27ae60;
+    --danger-color: #c0392b;
+    --warning-color: #f39c12;
+    --task-bg-color: #ecf0f1;
+    --border-radius: 5px;
+}
+
+
 .wp-todo-list {
-    
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.wp-todo-item {
+    background-color: var(--task-bg-color);
+    border-radius: var(--border-radius);
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.description {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.status {
+    padding: 5px 10px;
+    border-radius: var(--border-radius);
+    color: #fff;
+    font-size: 10px;
+}
+
+.in_progress {
+    background-color: var(--secondary-color);
+}
+
+.done {
+    background-color: var(--success-color);
+}
+
+.pending {
+    background-color: var(--warning-color);
+}
+
+.status-holder {
+    margin-bottom: 10px;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.justify-content-end {
+    justify-content: end;
+}
+
+.status-btn {
+    padding: 5px 10px;
+    border-radius: var(--border-radius);
+    color: #fff;
+    font-size: 10px;
+    text-decoration: none;
+}
+
+.inProgress {
+    background-color: var(--primary-color);
 }

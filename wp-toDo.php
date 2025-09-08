@@ -27,6 +27,9 @@ class wpToDo
         add_action("admin_init", array($this, "editTask"));
         add_shortcode('wp_todo', array($this, 'wp_todo_shortcode'));
         add_action("wp_enqueue_scripts", array($this, "frontend_enqueue_style"));
+
+        add_action("wp_ajax_edit_front_task", [$this, "editFrontTask"]);
+        add_action("wp_ajax_nopriv_edit_front_task", [$this, "editFrontTask"]);
     }
 
     /**
@@ -44,8 +47,26 @@ class wpToDo
     public function frontend_enqueue_style()
     {
         if (!is_admin()) {
-            wp_enqueue_style("wp-toDo-frontend", plugin_dir_url(__FILE__) . "assets/css/frontend.css", array(), "1.0", "all");
-            wp_enqueue_script("wp-toDo-frontend", plugin_dir_url(__FILE__) . "assets/js/frontend.js", array(), "1.0", true);
+            wp_enqueue_style(
+                "wp-toDo-frontend",
+                plugin_dir_url(__FILE__) . "assets/css/frontend.css",
+                array(),
+                "1.0",
+                "all"
+            );
+
+            wp_enqueue_script(
+                "wp-toDo-frontend",
+                plugin_dir_url(__FILE__) . "assets/js/frontend.js",
+                array(),
+                "1.0",
+                true
+            );
+
+            wp_localize_script("wp-toDo-frontend", "wpTodoAjax", [
+                "ajaxurl" => admin_url("admin-ajax.php"),
+                "nonce"   => wp_create_nonce("edit_front_task_nonce"),
+            ]);
         }
     }
 
@@ -82,13 +103,38 @@ class wpToDo
 
         $output = '<ul class="wp-todo-list">';
         foreach ($tasks as $task) {
-            $checked = !empty($task->completed) ? '✔ ' : '';
-            $output .= '<li class="wp-todo-item">' . $checked . esc_html($task->title) . '</li>';
+            $status_button = '';
+
+            if ($task->status == "in_progress") {
+                $status_button = '<button type="submit" class="status-btn done" data-status="done" data-id="' . esc_attr($task->id) . '">' . __("Done", "wp-toDo") . '</button>';
+            }
+
+            if ($task->status == "done" || $task->status == "pending") {
+                $status_button = '<button type="submit" class="status-btn inProgress" data-status="in_progress" data-id="' . esc_attr($task->id) . '">' . __("In progress", "wp-toDo") . '</button>';
+            }
+
+            $output .= '<li class="wp-todo-item">';
+            $output .= '<div class="d-flex justify-content-end status-holder"><span class="status ' . esc_html($task->status) . '">' . esc_html($task->status) . '</span></div>';
+            $output .= '<span class="title">' . esc_html($task->title) . '</span>';
+            $output .= '<span class="description">' . esc_html($task->description) . '</span>';
+
+            $output .= '<div class="action-buttons">
+             <form method="post" class="edit-task-form">
+                 ' . wp_nonce_field("edit_front_task_action", "edit_front_task_nonce", true, false) . '
+                 <input type="hidden" name="task_id" value="' . esc_attr($task->id) . '">
+                 <input type="hidden" name="status" class="status-input" value="">
+                 <input type="hidden" name="update_task" value="1">
+                 ' . $status_button . '
+             </form>
+         </div>';
+
+            $output .= '</li>';
         }
         $output .= '</ul>';
 
         return $output;
     }
+
 
     /**
      * Create the database table
@@ -321,6 +367,32 @@ class wpToDo
             echo '<div class="updated"><p>' . __("Task updated successfully!", "wp-toDo") . '</p></div>';
         }
     }
+
+
+    public function editFrontTask()
+    {
+        check_ajax_referer("edit_front_task_nonce", "nonce");
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . "todo";
+
+        $task_id = intval($_POST["task_id"]);
+        $status  = sanitize_text_field($_POST["status"]);
+
+        if ($task_id && $status) {
+            $wpdb->update(
+                $table_name,
+                ["status" => $status],
+                ["id" => $task_id],
+                ["%s"],
+                ["%d"]
+            );
+            wp_send_json_success(["message" => "Task updated"]);
+        }
+
+        wp_send_json_error(["message" => "Invalid data"]);
+    }
+
 
     /**
      * Add a new task

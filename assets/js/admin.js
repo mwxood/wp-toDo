@@ -1,5 +1,4 @@
 (function() {
-
     function editTask() {
         const dialog = document.getElementById("edit-task-dialog");
         const cancelBtn = document.getElementById("cancel-edit");
@@ -57,9 +56,7 @@
         deleteTask();
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-        init();
-    });
+    document.addEventListener("DOMContentLoaded", init);
 })();
 
 
