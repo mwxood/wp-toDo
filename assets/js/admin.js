@@ -1,54 +1,65 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const deleteButtons = document.querySelectorAll(".delete-task-button");
-    const dialog = document.getElementById("delete-confirm-dialog");
-    const taskIdField = document.getElementById("task-id-field");
-    const cancelBtn = document.getElementById("cancel-delete");
+(function() {
 
-    deleteButtons.forEach(function(button) {
-        button.addEventListener("click", function(e) {
-            e.preventDefault();
+    function editTask() {
+        const dialog = document.getElementById("edit-task-dialog");
+        const cancelBtn = document.getElementById("cancel-edit");
 
-            const taskId = button.getAttribute("data-task-id");
-            taskIdField.value = taskId;
+        document.querySelectorAll(".edit-task-button").forEach(button => {
+            button.addEventListener("click", function(e) {
+                e.preventDefault();
 
-            dialog.showModal();
+                document.getElementById("edit-task-id").value = this.dataset.id;
+                document.getElementById("edit-task-title").value = this.dataset.title;
+                document.getElementById("edit-task-description").value = this.dataset.description;
+
+                dialog.showModal();
+            });
         });
-    });
 
-    if(!cancelBtn){
-        return;
+        if(!cancelBtn){
+            return;
+        }
+
+        cancelBtn.addEventListener("click", function() {
+            dialog.close();
+        });
     }
 
-    cancelBtn.addEventListener("click", function() {
-        dialog.close();
-    });
-});
+    function deleteTask() {
+        const deleteButtons = document.querySelectorAll(".delete-task-button");
+        const dialog = document.getElementById("delete-confirm-dialog");
+        const taskIdField = document.getElementById("task-id-field");
+        const cancelBtn = document.getElementById("cancel-delete");
+        const nonceField = document.querySelector("#delete-task-form input[name='delete_task_nonce']");
 
-    
-document.addEventListener("DOMContentLoaded", function() {
-    const dialog = document.getElementById("edit-task-dialog");
-    const cancelBtn = document.getElementById("cancel-edit");
+        deleteButtons.forEach(function(button) {
+            button.addEventListener("click", function(e) {
+                e.preventDefault();
 
-    document.querySelectorAll(".edit-task-button").forEach(button => {
-        button.addEventListener("click", function(e) {
-            e.preventDefault();
+                const taskId = button.getAttribute("data-task-id");
+                taskIdField.value = taskId;
 
-            document.getElementById("edit-task-id").value = this.dataset.id;
-            document.getElementById("edit-task-title").value = this.dataset.title;
-            document.getElementById("edit-task-description").value = this.dataset.description;
+                nonceField.value = button.getAttribute("data-nonce");
 
-            dialog.showModal();
+                dialog.showModal();
+            });
         });
-    });
 
-    if(!cancelBtn){
-        return;
+        if (cancelBtn) {
+            cancelBtn.addEventListener("click", function() {
+                dialog.close();
+            });
+        }
     }
 
-    cancelBtn.addEventListener("click", function() {
-        dialog.close();
-    });
-});
+    function init() {
+        editTask();
+        deleteTask();
+    }
 
+    document.addEventListener("DOMContentLoaded", function() {
+        init();
+    });
+})();
 
 

@@ -71,7 +71,7 @@ class wpToDo
         $output = '<ul class="wp-todo-list">';
         foreach ($tasks as $task) {
             $checked = !empty($task->completed) ? '✔ ' : '';
-            $output .= '<li>' . $checked . esc_html($task->title) . '</li>';
+            $output .= '<li class="wp-todo-item">' . $checked . esc_html($task->title) . '</li>';
         }
         $output .= '</ul>';
 
@@ -188,62 +188,66 @@ class wpToDo
                                             <?php _e("Edit", "wp-toDo"); ?>
                                         </a>
 
-                                        <a href="#" class="button danger-button delete-task-button"
-                                            data-task-id="<?php echo esc_attr($task->id); ?>">
+                                        <a href="#"
+                                            class="button danger-button delete-task-button"
+                                            data-task-id="<?php echo esc_attr($task->id); ?>"
+                                            data-nonce="<?php echo wp_create_nonce('delete_task_' . $task->id); ?>">
                                             <?php _e("Delete", "wp-toDo"); ?>
                                         </a>
                                     </div>
                                 </td>
                             </tr>
 
-                            <dialog id="delete-confirm-dialog">
-                                <p><?php _e("Are you sure you want to delete this task?", "wp-toDo"); ?></p>
-                                <menu>
-                                    <form method="post" id="delete-task-form">
-                                        <?php wp_nonce_field("delete_task_" . $task->id, "delete_task_nonce"); ?>
-                                        <input type="hidden" name="task_id" id="task-id-field">
-                                        <input type="hidden" name="delete_task" value="1">
-                                        <button type="submit" id="confirm-delete"><?php _e("Delete", "wp-toDo"); ?></button>
-                                    </form>
-
-                                    <button id="cancel-delete" type="button"><?php _e("Cancel", "wp-toDo"); ?></button>
-                                </menu>
-                            </dialog>
-
-                            <dialog id="edit-task-dialog" class="dialog">
-                                <form method="post">
-                                    <?php wp_nonce_field("edit_task_action", "edit_task_nonce"); ?>
-                                    <input type="hidden" name="task_id" id="edit-task-id">
-
-                                    <label for="edit-task-title" class="d-block mb-1">
-                                        <?php _e("Title", "wp-toDo"); ?>
-                                    </label>
-                                    <input type="text" id="edit-task-title" class="d-block w-full mt-1 mb-1" name="title" required>
-
-                                    <label for="edit-task-status" class="d-block mb-1"><?php _e("Status", "wp-toDo"); ?></label>
-                                    <select id="edit-task-status" name="status" class="d-block w-full mt-1 mb-1">
-                                        <option value="pending"><?php _e("Pending", "wp-toDo"); ?></option>
-                                        <option value="in_progress"><?php _e("In Progress", "wp-toDo"); ?></option>
-                                        <option value="done"><?php _e("Done", "wp-toDo"); ?></option>
-                                    </select>
-
-                                    <label for="edit-task-description" class="d-block mb-1"><?php _e("Description", "wp-toDo"); ?></label>
-                                    <textarea id="edit-task-description" name="description" class="d-block w-full mt-1 mb-1"></textarea>
-
-                                    <menu class="d-flex justify-content-between p-0">
-                                        <button type="submit" name="update_task" class="button button-primary">
-                                            <?php _e("Update Task", "wp-toDo"); ?>
-                                        </button>
-                                        <button type="button" id="cancel-edit" class="button">
-                                            <?php _e("Cancel", "wp-toDo"); ?>
-                                        </button>
-                                    </menu>
-                                </form>
-                            </dialog>
-
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+
+                <dialog id="edit-task-dialog" class="dialog">
+                    <form method="post">
+                        <?php wp_nonce_field("edit_task_action", "edit_task_nonce"); ?>
+                        <input type="hidden" name="task_id" id="edit-task-id">
+
+                        <label for="edit-task-title" class="d-block mb-1">
+                            <?php _e("Title", "wp-toDo"); ?>
+                        </label>
+                        <input type="text" id="edit-task-title" class="d-block w-full mt-1 mb-1" name="title" required>
+
+                        <label for="edit-task-status" class="d-block mb-1"><?php _e("Status", "wp-toDo"); ?></label>
+                        <select id="edit-task-status" name="status" class="d-block w-full mt-1 mb-1">
+                            <option value="pending"><?php _e("Pending", "wp-toDo"); ?></option>
+                            <option value="in_progress"><?php _e("In Progress", "wp-toDo"); ?></option>
+                            <option value="done"><?php _e("Done", "wp-toDo"); ?></option>
+                        </select>
+
+                        <label for="edit-task-description" class="d-block mb-1"><?php _e("Description", "wp-toDo"); ?></label>
+                        <textarea id="edit-task-description" name="description" class="d-block w-full mt-1 mb-1"></textarea>
+
+                        <menu class="d-flex justify-content-between p-0">
+                            <button type="submit" name="update_task" class="button button-primary">
+                                <?php _e("Update Task", "wp-toDo"); ?>
+                            </button>
+                            <button type="button" id="cancel-edit" class="button">
+                                <?php _e("Cancel", "wp-toDo"); ?>
+                            </button>
+                        </menu>
+                    </form>
+                </dialog>
+
+
+                <dialog id="delete-confirm-dialog">
+                    <p><?php _e("Are you sure you want to delete this task?", "wp-toDo"); ?></p>
+                    <menu>
+                        <div class="d-flex">
+                            <form method="post" id="delete-task-form">
+                                <?php wp_nonce_field("delete_task_action", "delete_task_nonce"); ?>
+                                <input type="hidden" name="task_id" id="task-id-field">
+                                <input type="hidden" name="delete_task" value="1">
+                                <button type="submit" class="mr-1" id="confirm-delete"><?php _e("Delete", "wp-toDo"); ?></button>
+                            </form>
+                            <button id="cancel-delete" type="button"><?php _e("Cancel", "wp-toDo"); ?></button>
+                        </div>
+                    </menu>
+                </dialog>
             </div>
 
         <?php else : ?>
