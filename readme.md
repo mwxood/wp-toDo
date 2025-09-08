@@ -16,3 +16,8 @@ This plugin allows you to create and manage a To-Do list for your WordPress site
 2. The To-Do list will be displayed in the editor.
 3. You can add new tasks by clicking the 'Add Task' from Admin menu.
 4. You can edit or delete existing tasks by clicking the 'Edit' or 'Delete' from Admin menu.
+
+### Uninstall
+
+1. Deactivate the plugin through the 'Plugins' screen in WordPress.
+2. Remove the plugin from admin menu and it will remove the database table.
