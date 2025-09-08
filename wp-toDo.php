@@ -26,6 +26,7 @@ class wpToDo
         add_action("admin_init", array($this, "deleteTask"));
         add_action("admin_init", array($this, "editTask"));
         add_shortcode('wp_todo', array($this, 'wp_todo_shortcode'));
+        add_action("wp_enqueue_scripts", array($this, "frontend_enqueue_style"));
     }
 
     /**
@@ -35,6 +36,17 @@ class wpToDo
     public function init()
     {
         load_plugin_textdomain("wp-toDo", false, WPTODO_PLUGIN_DIR . "languages");
+    }
+
+    /**
+     * Enqueue frontend styles and scripts
+     */
+    public function frontend_enqueue_style()
+    {
+        if (!is_admin()) {
+            wp_enqueue_style("wp-toDo-frontend", plugin_dir_url(__FILE__) . "assets/css/frontend.css", array(), "1.0", "all");
+            wp_enqueue_script("wp-toDo-frontend", plugin_dir_url(__FILE__) . "assets/js/frontend.js", array(), "1.0", true);
+        }
     }
 
     /**
@@ -129,17 +141,6 @@ class wpToDo
             "dashicons-admin-generic",
             25
         );
-
-        add_submenu_page(
-            "wp-toDo",
-            "Settings",
-            "Settings",
-            "manage_options",
-            "wp-toDo-settings",
-            array($this, "view_settings_html"),
-            "dashicons-admin-generic",
-            25
-        );
     }
 
     /**
@@ -197,7 +198,6 @@ class wpToDo
                                     </div>
                                 </td>
                             </tr>
-
                         <?php endforeach; ?>
                     </tbody>
                 </table>
@@ -232,7 +232,6 @@ class wpToDo
                         </menu>
                     </form>
                 </dialog>
-
 
                 <dialog id="delete-confirm-dialog">
                     <p><?php _e("Are you sure you want to delete this task?", "wp-toDo"); ?></p>
