@@ -28,10 +28,18 @@ class wpToDo
         add_shortcode('wp_todo', array($this, 'wp_todo_shortcode'));
     }
 
+    /**
+     * Initialize the plugin
+     */
+
     public function init()
     {
         load_plugin_textdomain("wp-toDo", false, WPTODO_PLUGIN_DIR . "languages");
     }
+
+    /**
+     * Enqueue admin styles and scripts
+     */
 
     public function admin_enqueue_style()
     {
@@ -46,27 +54,9 @@ class wpToDo
         wp_enqueue_script("wp-toDo-admin", plugin_dir_url(__FILE__) . "assets/js/admin.js", array(), "1.0", true);
     }
 
-    function register_custom_blocks()
-    {
-        register_block_type(__DIR__ . '/blocks/build/block.json');
-    }
-
-    function wp_todo_render_block($attributes, $content)
-    {
-        $todos = get_option('wp_todo_items', []);
-
-        if (empty($todos)) {
-            return '<p>Няма задачи.</p>';
-        }
-
-        $output = '<ul class="wp-todo-block">';
-        foreach ($todos as $todo) {
-            $output .= '<li>' . esc_html($todo) . '</li>';
-        }
-        $output .= '</ul>';
-
-        return $output;
-    }
+    /**
+     * Shortcode to display the To-Do list
+     */
 
     function wp_todo_shortcode($atts)
     {
@@ -88,6 +78,9 @@ class wpToDo
         return $output;
     }
 
+    /**
+     * Create the database table
+     */
 
     public function create_table()
     {
@@ -109,6 +102,10 @@ class wpToDo
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($sql);
     }
+
+    /**
+     * Add the admin menu
+     */
 
     public function admin_menu()
     {
@@ -144,6 +141,11 @@ class wpToDo
             25
         );
     }
+
+    /**
+     * Display the admin page
+     * @return void
+     */
 
     public function view_tasks_page_html()
     {
@@ -253,6 +255,11 @@ class wpToDo
 
     }
 
+    /**
+     * Delete a task
+     * @return void
+     */
+
     public function deleteTask()
     {
         global $wpdb;
@@ -274,6 +281,11 @@ class wpToDo
             echo '<div class="updated"><p>' . __("Task deleted successfully!", "wp-toDo") . '</p></div>';
         }
     }
+
+    /**
+     * Edit a task
+     * @return void
+     */
 
     public function editTask()
     {
@@ -307,8 +319,10 @@ class wpToDo
         }
     }
 
-
-    public function view_settings_html() {}
+    /**
+     * Add a new task
+     * @return void
+     */
 
     public function admin_page()
     {
