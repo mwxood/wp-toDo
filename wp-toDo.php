@@ -447,6 +447,6 @@ class wpToDo
 }
 
 
-if (class_exists("wpToDo")) {
+if (!class_exists("wpToDo")) {
     $wpToDo = new wpToDo();
 }
